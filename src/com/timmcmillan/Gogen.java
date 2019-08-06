@@ -278,6 +278,20 @@ public class Gogen {
     }
 
 
+
+    public String cellPosition(int i, int j) {
+
+        String cellPosition;
+        char rowPosition;
+
+
+        rowPosition = (char) (65 + i);
+
+        cellPosition = Character.toString(rowPosition)+Integer.toString(j+1);
+
+        return cellPosition;
+    }
+
     public CellLetter[][] updateCellPossibilities(CellLetter[][] letterPositions, ArrayList<String> inputWords) {
 
         ArrayList<ArrayList<String>> listWordsAsLetters = listWordsAsLetters(inputWords);
@@ -447,19 +461,5 @@ public class Gogen {
         return letterPositions;
 }
 
-
-
-    public String cellPosition(int i, int j) {
-
-        String cellPosition;
-        char rowPosition;
-
-
-        rowPosition = (char) (65 + i);
-
-        cellPosition = Character.toString(rowPosition)+Integer.toString(j+1);
-
-        return cellPosition;
-    }
 
 }

@@ -10,6 +10,10 @@ public class CellLetter {
         this.letterOptionsList = letterOptions;
     }
 
+    public ArrayList<String> getLetterOptions() {
+        return letterOptionsList;
+    }
+
     public CellLetter(String cellLetter) {
 
         ArrayList<String> letterOptions = new ArrayList<String>();
@@ -17,9 +21,7 @@ public class CellLetter {
         this.letterOptionsList = letterOptions;
     }
 
-    public ArrayList<String> getLetterOptions() {
-        return letterOptionsList;
-    }
+
 
 
     public void setLetterOptions(ArrayList<String> letterOptions) {
