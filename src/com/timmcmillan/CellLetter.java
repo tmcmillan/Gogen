@@ -21,9 +21,6 @@ public class CellLetter {
         this.letterOptionsList = letterOptions;
     }
 
-
-
-
     public void setLetterOptions(ArrayList<String> letterOptions) {
         this.letterOptionsList = letterOptions;
     }

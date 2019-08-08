@@ -9,52 +9,58 @@ public class Gogen {
 
     public void newGogen() {
 
-        String[] inputLetters = inputLetters();
-        ArrayList<String> inputWords = inputWords();
+//        String[] inputLetters = inputLetters();
+//        ArrayList<String> inputWords = inputWords();
+
+        String[] inputLetters = {"X", "C", "F", "G", "H", "W", "Q", "D", "Y"};
+        ArrayList<String> inputWords = new ArrayList<String>();
+        inputWords.add("BAWLING");
+        inputWords.add("CRAVE");
+        inputWords.add("FAMILY");
+        inputWords.add("HIM");
+        inputWords.add("JUNKET");
+        inputWords.add("MOP");
+        inputWords.add("NEXT");
+        inputWords.add("SIP");
+        inputWords.add("SQUID");
+
         int iterations = 0;
-        boolean solved=false;
+        boolean solved = false;
+        ArrayList<String> knownLetters;
 
-//        String[] inputLetters = {"X", "C", "F", "G", "H", "W", "Q", "D", "Y"};
-//        ArrayList<String> inputWords = new ArrayList<>();
-//        inputWords.add("BAWLING");
-//        inputWords.add("CRAVE");
-//        inputWords.add("FAMILY");
-//        inputWords.add("HIM");
-//        inputWords.add("JUNKET");
-//        inputWords.add("MOP");
-//        inputWords.add("NEXT");
-//        inputWords.add("SIP");
-//        inputWords.add("SQUID");
-
+        //a 2d array of cell letters
         CellLetter[][] letterPositions = setInitialLetterPositions(inputLetters);
-
 
         drawBoard(letterPositions);
         printWords(inputWords);
 
+        System.out.println();
+
+        //check that the words inputted only contain letterss
         if (checkWordInputIsValid(inputWords) == false) {
             System.out.println("\nThe input contains some characters that are not letters");
             solved = true;
         }
 
-        ArrayList<String> knownLetters;
 
-
-        while(!solved) {
+        while (!solved) {
 
             letterPositions = updateCellPossibilities(letterPositions, inputWords);
             knownLetters = knownLetters(letterPositions);
             iterations++;
 
-            if(knownLetters.size()==25){
-                solved=true;
+            //once we know all of the letters, the puzzle is solved
+            if (knownLetters.size() == 25) {
+                solved = true;
                 System.out.println("Solved after " + iterations + " iterations");
 
                 drawBoard(letterPositions);
             }
 
-            if(iterations>200){
+            //if we carry out 200 iterations and we still cannot solve the puzzle, break and check the input.
+            if (iterations > 200) {
                 System.out.println("\n\nHmmmm, I'm stumped with this one! Are you sure the input is right?");
+                drawBoard(letterPositions);
                 break;
             }
 
@@ -62,11 +68,14 @@ public class Gogen {
 
     }
 
-
-
+    /**
+     * enable the user to input the 9 starting letters of the puzzle
+     *
+     * @return an array, length 9, containing the 9 given letters
+     */
     public String[] inputLetters() {
 
-
+        //generate the emp
         String[] inputLetters = new String[9];
         ArrayList<String> alphabet = new ArrayList<>();
 
@@ -78,12 +87,12 @@ public class Gogen {
         System.out.println("Please enter the 9 letters to be given to the player. \n" +
                 "Starting with the top left value, working across the columns, and then down the rows\n");
 
-        int i= 1;
+        int i = 1;
 
-        while(i<10) {
+        while (i < 10) {
             System.out.println("Enter letter " + i);
             inputLetters[i - 1] = scanner.nextLine().toUpperCase();
-            if(inputLetters[i-1].length()==1 && alphabet.contains(inputLetters[i-1])) {
+            if (inputLetters[i - 1].length() == 1 && alphabet.contains(inputLetters[i - 1])) {
                 i++;
             } else {
                 System.out.println("Invalid input. Try again");
@@ -145,7 +154,7 @@ public class Gogen {
 
     public String letter(CellLetter[][] letterPositions, int i, int j) {
 
-        String letter = "";
+        String letter;
 
         if (letterPositions[i][j] == null) {
             letter = " ";
@@ -225,15 +234,15 @@ public class Gogen {
         }
 
 
-        for (int i=0; i<inputWords.size(); i++){
-            for(int j=0; j<wordsAsLetters.get(i).size(); j++) {
-                if (alphabet.contains(wordsAsLetters.get(i).get(j))){
-            } else {
-                validInput = false;
-            }
+        for (int i = 0; i < inputWords.size(); i++) {
+            for (int j = 0; j < wordsAsLetters.get(i).size(); j++) {
+                if (alphabet.contains(wordsAsLetters.get(i).get(j))) {
+                } else {
+                    validInput = false;
+                }
 
+            }
         }
-    }
         return validInput;
     }
 
@@ -265,7 +274,7 @@ public class Gogen {
 
     public ArrayList<String> knownLetters(CellLetter[][] letterPositions) {
 
-        ArrayList<String> knownLetters = new ArrayList<String>();
+        ArrayList<String> knownLetters = new ArrayList<>();
 
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
@@ -277,21 +286,6 @@ public class Gogen {
         return knownLetters;
     }
 
-
-
-    public String cellPosition(int i, int j) {
-
-        String cellPosition;
-        char rowPosition;
-
-
-        rowPosition = (char) (65 + i);
-
-        cellPosition = Character.toString(rowPosition)+Integer.toString(j+1);
-
-        return cellPosition;
-    }
-
     public CellLetter[][] updateCellPossibilities(CellLetter[][] letterPositions, ArrayList<String> inputWords) {
 
         ArrayList<ArrayList<String>> listWordsAsLetters = listWordsAsLetters(inputWords);
@@ -299,167 +293,79 @@ public class Gogen {
         String neighbouringLetter;
         ArrayList<String> knownLetters;
 
-        for (int i = 0; i < inputWords.size(); i++) {
-            for (int j = 0; j < listWordsAsLetters.get(i).size() - 1; j++) {
-                letterOfInterest = listWordsAsLetters.get(i).get(j);
-                neighbouringLetter = listWordsAsLetters.get(i).get(j + 1);
+
+        for (int p=0;p<=1;p++) {
+            for (int i = 0; i < inputWords.size(); i++) {
+                for (int j = p; j < listWordsAsLetters.get(i).size() - 1 + p; j++) {
+                    letterOfInterest = listWordsAsLetters.get(i).get(j);
+                    neighbouringLetter = listWordsAsLetters.get(i).get(j + 1 - (2 * p));
 
 
-                for (int k = 0; k < 5; k++) {
-                    for (int l = 0; l < 5; l++) {
 
-                        if (letterPositions[k][l].getLetterOptions().size() == 1 || !(letterPositions[k][l].getLetterOptions().contains(letterOfInterest))) {
-                        } else {
-                            if (cellPosition(k, l).equals("A2") || cellPosition(k, l).equals("A4")) {
-                                if (letterPositions[k][l - 1].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k][l + 1].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k + 1][l - 1].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k + 1][l].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k + 1][l + 1].getLetterOptions().contains(neighbouringLetter)) {
-                                } else {
-                                    letterPositions[k][l].getLetterOptions().remove(letterOfInterest);
-                                }
-                            } else if (cellPosition(k, l).equals("B1") || cellPosition(k, l).equals("C1") || cellPosition(k, l).equals("D1")) {
-                                if (letterPositions[k - 1][l].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k - 1][l + 1].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k][l + 1].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k + 1][l].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k + 1][l + 1].getLetterOptions().contains(neighbouringLetter)) {
-                                } else {
-                                    letterPositions[k][l].getLetterOptions().remove(letterOfInterest);
-                                }
-                            } else if (cellPosition(k, l).equals("B2") || cellPosition(k, l).equals("B3") || cellPosition(k, l).equals("B4") ||
-                                    cellPosition(k, l).equals("C2") || cellPosition(k, l).equals("C3") || cellPosition(k, l).equals("C4") ||
-                                    cellPosition(k, l).equals("D2") || cellPosition(k, l).equals("D3") || cellPosition(k, l).equals("D4")) {
-                                if (letterPositions[k - 1][l - 1].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k - 1][l].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k - 1][l + 1].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k][l - 1].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k][l + 1].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k + 1][l - 1].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k + 1][l].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k + 1][l + 1].getLetterOptions().contains(neighbouringLetter)) {
-                                } else {
-                                    letterPositions[k][l].getLetterOptions().remove(letterOfInterest);
-                                }
-                            } else if (cellPosition(k, l).equals("B5") || cellPosition(k, l).equals("C5") || cellPosition(k, l).equals("D5")) {
-                                if (letterPositions[k - 1][l - 1].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k - 1][l].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k][l - 1].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k + 1][l - 1].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k + 1][l].getLetterOptions().contains(neighbouringLetter)) {
-                                } else {
-                                    letterPositions[k][l].getLetterOptions().remove(letterOfInterest);
-                                }
-                            } else if (cellPosition(k, l).equals("E2") || cellPosition(k, l).equals("E3") || cellPosition(k, l).equals("E4")) {
-                                if (letterPositions[k - 1][l - 1].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k - 1][l].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k - 1][l + 1].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k][l - 1].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k][l + 1].getLetterOptions().contains(neighbouringLetter)) {
-                                } else {
-                                    letterPositions[k][l].getLetterOptions().remove(letterOfInterest);
-                                }
-                            }
-                        }
-                    }
-                }
-                knownLetters = knownLetters(letterPositions);
-                for (int z = 0; z < knownLetters.size(); z++) {
-                    for (int x = 0; x < 5; x++) {
-                        for (int y = 0; y < 5; y++) {
-                            if (letterPositions[x][y].getLetterOptions().size() > 1 && letterPositions[x][y].getLetterOptions().contains(knownLetters.get(z))) {
-                                letterPositions[x][y].getLetterOptions().remove(knownLetters.get(z));
-                            }
-                        }
-                    }
-                }
-            }
-        }
+                    for (int k = 0; k < 5; k++) {
+                        for (int l = 0; l < 5; l++) {
 
-        for (int i = 0; i < inputWords.size(); i++) {
-            for (int j = 1; j < listWordsAsLetters.get(i).size(); j++) {
-                letterOfInterest = listWordsAsLetters.get(i).get(j);
-                neighbouringLetter = listWordsAsLetters.get(i).get(j - 1);
+                            if (!(letterPositions[k][l].getLetterOptions().size() == 1 || !(letterPositions[k][l].getLetterOptions().contains(letterOfInterest)))) {
+
+                                ArrayList<Integer> rowsToCheck = rowsToCheck(k);
+                                ArrayList<Integer> columnsToCheck = rowsToCheck(l);
 
 
-                for (int k = 0; k < 5; k++) {
-                    for (int l = 0; l < 5; l++) {
+                                boolean anyAdjacentCellContainsNeighbouringLetter = false;
+                                boolean adjacentCellContainsNeighbouringLetter;
 
-                        if (letterPositions[k][l].getLetterOptions().size() == 1 || !(letterPositions[k][l].getLetterOptions().contains(letterOfInterest))) {
-                        } else {
-                            if (cellPosition(k, l).equals("A2") || cellPosition(k, l).equals("A4")) {
-                                if (letterPositions[k][l - 1].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k][l + 1].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k + 1][l - 1].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k + 1][l].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k + 1][l + 1].getLetterOptions().contains(neighbouringLetter)) {
-                                } else {
+                                for (int m = 0; m < rowsToCheck.size(); m++) {
+                                    for (int n = 0; n < columnsToCheck.size(); n++) {
+
+                                        if (!(rowsToCheck.get(m) == k && columnsToCheck.get(n) == l)) {
+
+                                            adjacentCellContainsNeighbouringLetter = letterPositions[rowsToCheck.get(m)][columnsToCheck.get(n)].getLetterOptions().contains(neighbouringLetter);
+
+                                            anyAdjacentCellContainsNeighbouringLetter = anyAdjacentCellContainsNeighbouringLetter || adjacentCellContainsNeighbouringLetter;
+
+                                        }
+                                    }
+                                }
+                                if (anyAdjacentCellContainsNeighbouringLetter == false) {
                                     letterPositions[k][l].getLetterOptions().remove(letterOfInterest);
                                 }
-                            } else if (cellPosition(k, l).equals("B1") || cellPosition(k, l).equals("C1") || cellPosition(k, l).equals("D1")) {
-                                if (letterPositions[k - 1][l].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k - 1][l + 1].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k][l + 1].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k + 1][l].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k + 1][l + 1].getLetterOptions().contains(neighbouringLetter)) {
-                                } else {
-                                    letterPositions[k][l].getLetterOptions().remove(letterOfInterest);
-                                }
-                            } else if (cellPosition(k, l).equals("B2") || cellPosition(k, l).equals("B3") || cellPosition(k, l).equals("B4") ||
-                                    cellPosition(k, l).equals("C2") || cellPosition(k, l).equals("C3") || cellPosition(k, l).equals("C4") ||
-                                    cellPosition(k, l).equals("D2") || cellPosition(k, l).equals("D3") || cellPosition(k, l).equals("D4")) {
-                                if (letterPositions[k - 1][l - 1].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k - 1][l].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k - 1][l + 1].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k][l - 1].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k][l + 1].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k + 1][l - 1].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k + 1][l].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k + 1][l + 1].getLetterOptions().contains(neighbouringLetter)) {
-                                } else {
-                                    letterPositions[k][l].getLetterOptions().remove(letterOfInterest);
-                                }
-                            } else if (cellPosition(k, l).equals("B5") || cellPosition(k, l).equals("C5") || cellPosition(k, l).equals("D5")) {
-                                if (letterPositions[k - 1][l - 1].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k - 1][l].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k][l - 1].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k + 1][l - 1].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k + 1][l].getLetterOptions().contains(neighbouringLetter)) {
-                                } else {
-                                    letterPositions[k][l].getLetterOptions().remove(letterOfInterest);
-                                }
-                            } else if (cellPosition(k, l).equals("E2") || cellPosition(k, l).equals("E3") || cellPosition(k, l).equals("E4")) {
-                                if (letterPositions[k - 1][l - 1].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k - 1][l].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k - 1][l + 1].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k][l - 1].getLetterOptions().contains(neighbouringLetter) ||
-                                        letterPositions[k][l + 1].getLetterOptions().contains(neighbouringLetter)) {
-                                } else {
-                                    letterPositions[k][l].getLetterOptions().remove(letterOfInterest);
-                                }
+
+
                             }
                         }
                     }
                 }
 
-                knownLetters = knownLetters(letterPositions);
-                for (int z = 0; z < knownLetters.size(); z++) {
-                    for (int x = 0; x < 5; x++) {
-                        for (int y = 0; y < 5; y++) {
-                            if (letterPositions[x][y].getLetterOptions().size() > 1 && letterPositions[x][y].getLetterOptions().contains(knownLetters.get(z))) {
-                                letterPositions[x][y].getLetterOptions().remove(knownLetters.get(z));
+                        knownLetters = knownLetters(letterPositions);
+                        for (int z = 0; z < knownLetters.size(); z++) {
+                            for (int x = 0; x < 5; x++) {
+                                for (int y = 0; y < 5; y++) {
+                                    if (letterPositions[x][y].getLetterOptions().size() > 1 && letterPositions[x][y].getLetterOptions().contains(knownLetters.get(z))) {
+                                        letterPositions[x][y].getLetterOptions().remove(knownLetters.get(z));
+                                    }
+                                }
                             }
                         }
                     }
                 }
-            }
-        }
-
 
 
         return letterPositions;
+    }
+
+    public ArrayList<Integer> rowsToCheck(int rowIndex) {
+
+        ArrayList<Integer> rowsToCheck = new ArrayList<>();
+
+        for(int i=-1; i<=1; i++) {
+            if(rowIndex+i >=0 && rowIndex+i<5) {
+                rowsToCheck.add(rowIndex+i);
+            }
+        }
+        return rowsToCheck;
+    }
+
 }
 
 
-}
+
